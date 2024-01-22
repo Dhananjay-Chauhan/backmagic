@@ -1,41 +1,35 @@
-# from sqlalchemy import func
 from api import app
 import bcrypt
 import os
-from flask import render_template, flash, request, redirect, url_for,Response,send_file,jsonify
-from sqlalchemy.orm import DeclarativeBase
-from datetime import datetime
+from flask import render_template, request, redirect, url_for,Response,send_file,jsonify
 from .models import *
-from flask_cors import cross_origin
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_login import login_user, login_required, logout_user
 
 @app.route("/")
 def index():
-    return render_template('base.html',title='dhananjau')
-
-@app.route("/success")
-def success():
-    return render_template('success.html')
+    return render_template('index.html',title='Backmagic | LUGVITC')
 
 @app.route("/login",methods=['GET','POST'])
 def login():
-    print(bcrypt.hashpw("dhananjay".encode(),bcrypt.gensalt()).decode())
     if request.method=="POST":
         reg_no = request.form['reg_no']
         password = request.form['password']
         hash_password = Admins.query.filter_by(reg_no=reg_no).first()
-        print("check :\n")
-        # print(bcrypt.checkpw(password.encode(),hash_password.password.encode()))
         if bcrypt.checkpw(password.encode(),hash_password.password.encode()):
             login_user(hash_password)
-            return redirect(url_for('success'))
+            return redirect(url_for("admin.index"))
         
     return render_template('login.html')
 
+@app.route("/logout", methods=("GET","POST"))
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
 
 @app.route("/leaderboard")
 def leaderboard():
-    data = Leaderboard.query.all();
+    data = Leaderboard.query.all()
     members_data = []
     for member in data:
         temp = {}
@@ -50,7 +44,7 @@ def leaderboard():
         temp["contribution_details"] = member.contribution_details
         temp["photo"] = member.photo
         members_data.append(temp)
-    return jsonify(members_data);
+    return jsonify(members_data)
 
 @app.route("/leaderboard/image/<reg_no>")
 def member_image(reg_no):
