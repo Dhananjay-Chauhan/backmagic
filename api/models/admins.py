@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_admin.contrib.sqla import ModelView
-from flask_admin import BaseView
+from flask_admin.menu import MenuLink
 from flask_login import UserMixin, login_manager, current_user
 from flask import g, redirect, request, url_for
 
@@ -29,7 +29,8 @@ class Admins(db.Model, UserMixin):
 
 class ModelViewAdmins(ModelView) :
     form_columns = ['admin_id','reg_no','password'] 
-        
+    can_delete = False
+    
     def is_accessible(self):
         return current_user.is_authenticated
     
@@ -43,3 +44,4 @@ class ModelViewAdmins(ModelView) :
    
 # admin.add_view(AdminHome(name='', endpoint=''))
 admin.add_view(ModelViewAdmins(Admins,db.session))
+admin.add_link(MenuLink(name="Logout", url="/logout"))

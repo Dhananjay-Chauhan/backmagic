@@ -5,10 +5,10 @@ from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_cors import CORS
-import psycopg2
+
 app = Flask(__name__)
 CORS(app) 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:postgres@localhost:5433/backmagic"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:postgres@localhost:5432/backmagic_test_d"
 app.config['SECRET_KEY'] = "dingdingdingdingding"
 db = SQLAlchemy(app)
 admin = Admin(app)
